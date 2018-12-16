@@ -53,8 +53,11 @@ require('crashreporter').configure({
 
 //Routes here
 
+const index = require('./routes/index');
 
+app.use( '/' , index );
 
+app.use('*',index);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -64,7 +67,8 @@ app.use(function (req, res, next) {
 });
 
 
-
+const logger = require('./config/logger');
+logger.debug('logger first debug');
 //PORT provided by server or 5000 dev
 const PORT = process.env.PORT || 5000;
 //Server starting
