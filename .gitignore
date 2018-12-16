@@ -1,3 +1,4 @@
 /node_modules
 /config/config_dev.js
 /logs
+/config/awsConfig_dev.js

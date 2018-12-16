@@ -69,8 +69,8 @@ router.post('/login', (request, response)=>{
 //@description register a user using email
 //@access Public route
 router.post('/register', (request, response)=>{
+    logger.debug('routes/api/users.js.Register a user');
     const body = _.pick(request.body,["email","username","password","address","location","firstName","lastName","gender","mobile","code","connection","sId","accessToken"]);
-
     let isValidEmail = false;
     let isValidUsername = false;
     let isValidPassword = false;
@@ -113,7 +113,7 @@ router.post('/register', (request, response)=>{
     //errorsObj
     const errors = {};
     
-    
+    // console.log(body)
 
     if(body.email){
         body["email"] = body.email.toLowerCase();
@@ -143,7 +143,7 @@ router.post('/register', (request, response)=>{
         isValidLat = true;
     }
     else{
-        isValidLat = !isNaN(body.location.latitude);
+        isValidLat =( typeof(body.location.latitude) === "number"  && !isNaN(body.location.latitude) );
         if(!isValidLat){
             errors["latitude"] = "Invalid latitude";
         }
@@ -153,7 +153,7 @@ router.post('/register', (request, response)=>{
         isValidLng = true;
     }
     else{
-        isValidLng = !isNaN(body.location.longitude);
+        isValidLng = ( typeof(body.location.longitude)==="number" && !isNaN(body.location.longitude) );
         if(!isValidLng){
             errors["longitude"] = "Invalid longitude";
         }
@@ -205,7 +205,7 @@ router.post('/register', (request, response)=>{
         isValidCounrty = true;
     }
     else{
-        isValidCounrty = validate.string(body.country);
+        isValidCounrty = validate.string(body.address.country);
         if(!isValidCounrty){
             errors["country"] = "Invalid Country";
         }
@@ -247,4 +247,81 @@ router.post('/register', (request, response)=>{
     }
     utils.sendResponse(response,responseType.SUCCESS,'register',{"data":"Data"},errors);
 });
+
+
+
+//@route POST /users/upload-pic
+//@description upload user profile pic
+//@access Public route
+router.post('/upload-pic',(request, response)=>{
+    logger.debug('routes/api/upload-pic upload user profile picture');
+
+    //inst aws and busboy
+    const config = require('../../config');
+    const awsOperations = config.awsOperations;
+    const BusBoy = require('busboy');
+
+    var data = {};
+    var busboy = new BusBoy({ headers: request.headers });
+
+    try{
+        busboy.on('file', function(fieldname, file, filename, encoding, mimetype){
+            data["userId"] = request.userData.userId;
+            logger.debug('filedname:', fieldname.trim() + " filename:" + mimetype);
+            if (fieldname.trim() != 'image' || !(mimetype.includes('image/'))) {
+                logger.debug('invalid mimetype');
+                return utils.sendResponse(response,responseType.BAD_REQUEST,'Invalid Image MIME type');
+            }
+            console.log("bussboy okay")
+            const config = require('../../config');
+            awsOperations.s3Upload(config.AWS_BUCKET_Profile, file, 'profile/'+'profile-' + data.userId + '.jpeg', (error, result)=>{
+                console.log("aws okay",error,result)
+                if(error){
+                    logger.debug(error);
+                    utils.sendResponse(response,responseType.FAIL);
+                }
+                else{
+                    logger.debug(result);
+                    let URL_IMAGE = config.AWS_CLOUDFRONT_URL + '/profile/'+'profile-' + data.userId + '.jpeg';
+                    utils.sendResponse(response,responseType.SUCCESS,'Successfull upload');
+                    // dbOperations.updateProperty(data.userId, 'profileImage', URL_IMAGE, (error1, result1)=>{
+                    //     if(error1){
+                    //         logger.error(error1);
+                    //         utils.sendResponse(response,responseType.FAIL);
+                    //     }
+                    //     else{
+                    //         if(!result1){
+                    //             logger.debug('user not found');
+                    //             utils.sendResponse(response,responseType.NOT_FOUND,'User not found');
+                    //         }
+                    //         else{
+                    //             logger.debug('imageuploaded at',result1.profileImage);
+                    //             utils.sendResponse(response,responseType.SUCCESS,'Uploaded Image Successfully');
+                    //         }
+                    //     }
+                    // })
+                }
+            });
+
+        })
+    }
+    catch( exp ){
+        logger.debug('error:',exp)
+        utils.sendResponse(response,responseType.FAIL);
+
+    }
+    
+    busboy.on('finish', function () {
+        logger.debug('Upload picture complete finish-busboy');
+    });
+
+    return request.pipe(busboy);
+
+
+
+});
+
+
+
+
 module.exports = router;
