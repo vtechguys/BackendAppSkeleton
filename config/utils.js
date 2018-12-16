@@ -1,4 +1,8 @@
 'use strict'
+
+//crypto-inbuilt module
+const crypto = require('crypto');
+
 //console loging
 const logger = require('./logger');
 //configurations
@@ -91,7 +95,7 @@ const utils = {
         }
     },
     createMail:function(data, type){
-        logger.debug('createMail(data,type)',data,type)
+        logger.debug('config/utils createMail(data,type)',data,type)
         var that = this;
         var to = "";
         var text = "";
@@ -122,7 +126,7 @@ const utils = {
     },
     sendMail:function(To,Subject,EmailText,Html_Body){
         
-        logger.debug("sendMail(To,Subject,EmailText,Html_Body)",To,Subject,EmailText)
+        logger.debug("config/utils sendMail(To,Subject,EmailText,Html_Body)",To,Subject,EmailText)
         var transporter = nodeMailer.createTransport({
             service: config.SMTP_SERVICE,
             auth: {
@@ -142,25 +146,60 @@ const utils = {
     // send mail with defined transport object
         transporter.sendMail(mailOptions, function(error, info){
             if (error) {
-                logger.debug("Sending Mail Error",error);
-                console.log('Sending Mail Error',error);
+                logger.debug("config/utils Sending Mail Error",error);
+                console.log('config/utils Sending Mail Error',error);
             }
             if (info != undefined) {
-                logger.debug('Message Sent: ' + info.response);
-                console.log('Message Sent: ' + info.response)
+                logger.debug('config/utils Message Sent: ' + info.response);
+                console.log('config/utils Message Sent: ' + info.response)
             } else {
-                logger.debug("Error Sending Mail");
-                console.log("Error Sening Mail");
+                logger.debug("config/utils Error Sending Mail");
+                console.log("config/utils Error Sening Mail");
             }
         });
     },
-    randomStringGenerate: function (x) {
+    randomStringGenerateId: function (x) {
         //instant import -randomString
         //UUID Generator
         const randomString = require("randomstring");
         //x is length of ID.
         return randomString.generate(x);
-    }
+    },
+    /*
+    * generates random string of characters i.e salt
+    * @function
+    * @param {number} length - Length of the random string.
+    */
+   genRandomString : function(length){
+     //to be used as salt for password encryptions
+
+      logger.debug('config/utils encrypt genRandomString');
+      return crypto.randomBytes(Math.ceil(length/2))
+            .toString('hex')     /** convert to hexadecimal format */
+            .slice(0,length);   /** return required number of characters */
+    },   
+
+    /*
+    * hash password with sha512.
+    * @function
+    * @param {string} password - List of required fields.
+    * @param {string} salt - Data to be validated.
+    */
+    sha512 : function(string, salt){
+        logger.debug('config/utils encrypt sha512');
+        try{
+            var hash = crypto.createHmac('sha512', salt);
+            hash.update(string);
+            var value = hash.digest('hex'); /** Hashing algorithm sha512 */
+        }
+        catch(error){
+            logger.error(error);
+        }
+        return {
+            salt:salt,
+            hash:value
+        }
+    },
 };
 
 

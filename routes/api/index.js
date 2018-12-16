@@ -16,7 +16,7 @@ const logger = config.logger;
 // @description sends back build front-end file index.html
 // @Access Public Access
 router.get('/', (request, response) =>{
-    logger.debug('GET /.Will send path to welcome page.');
+    logger.debug('routes/api. GET /. Will send path to welcome page.');
     //base welcome path could be another server path in that case just send this path in response.sendFile(welcomePathBase)
     let welcomePathBase = config.welcomePage;
     //normailse path move to root cd ./../../ ie up api up routes to ~/folder-App
@@ -36,5 +36,6 @@ router.get('/', (request, response) =>{
 router.post('/web-index', (request, response )=>{
     response.send('text');
 });
+
 
 module.exports = router;

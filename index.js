@@ -58,17 +58,20 @@ require('crashreporter').configure({
     // mailTo: 'yourmail@gmail.com'
 });
 
+////////////////////////
 
 //Routes here
 
 //Import routes
 const index = require('./routes/api/index');
+const users = require('./routes/api/users');
 
-
-//ROute path match and going
+//Route path match and going
 app.use( '/' , index );
-
+app.use('/users',users);
 app.use('*',index);
+
+//////////////////////////
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

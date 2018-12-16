@@ -16,6 +16,7 @@
     "log4js": "^2.0.0",
     "morgan": "^1.9.0",
     "randomstring": "^1.1.5",
-    "express-favicon": "^2.0.0"
+    "express-favicon": "^2.0.0",
+    "jsonwebtoken": "^8.3.0"
   }
 }
