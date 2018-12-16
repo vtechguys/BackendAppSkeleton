@@ -67,8 +67,6 @@ app.use(function (req, res, next) {
 });
 
 
-const logger = require('./config/logger');
-logger.debug('logger first debug');
 //PORT provided by server or 5000 dev
 const PORT = process.env.PORT || 5000;
 //Server starting
