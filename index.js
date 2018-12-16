@@ -9,6 +9,9 @@ const loggerHttp = require('morgan');
 const bodyParser = require('body-parser');
 //favicon for app
 const mfavicon = require("express-favicon");
+//configurations
+const config = require('./config');
+
 
 //APP
 const app = express();
@@ -25,17 +28,22 @@ app.use( loggerHttp( 'dev' ) );
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//static path
+const staticContentPath = config.staticContentPath;
 //static files requests
-app.use( express.static( path.join(__dirname, 'public/build' ) ) );
+app.use( express.static( path.join(__dirname, staticContentPath ) ) );
 
 //favicon pickup from ~/public/build/favicon
-app.use( mfavicon( path.join( __dirname, 'public/build' )  ) );
+
+app.use( mfavicon( path.join( __dirname, ( staticContentPath+'/favicon.png') )  ) );
 
 //crash report
 require('crashreporter').configure({
-    outDir: './logs', // default to cwd
-    exitOnCrash: true, // if you want that crash reporter exit(1) for you, default to true,
-    maxCrashFile: 100, // older files will be removed up, default 5 files are kept
+    'outDir': './logs', // default to cwd
+    'exitOnCrash': true, // if you want that crash reporter exit(1) for you, default to true,
+    'maxCrashFile': 100, // older files will be removed up, default 5 files are kept
+    
+    //if you want to mail the crash reports 
     // mailEnabled: true,
     // mailTransportName: 'SMTP',
     // mailTransportConfig: {
@@ -53,8 +61,11 @@ require('crashreporter').configure({
 
 //Routes here
 
-const index = require('./routes/index');
+//Import routes
+const index = require('./routes/api/index');
 
+
+//ROute path match and going
 app.use( '/' , index );
 
 app.use('*',index);
@@ -67,9 +78,9 @@ app.use(function (req, res, next) {
 });
 
 
-//PORT provided by server or 5000 dev
+//PORT provided by server in production or 5000 dev
 const PORT = process.env.PORT || 5000;
 //Server starting
-app.listen(1234,function(){
+app.listen(PORT,function(){
     console.log(`Server listeninig on port ${PORT}`);
 })
