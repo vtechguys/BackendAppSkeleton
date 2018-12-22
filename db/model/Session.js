@@ -1,3 +1,4 @@
+'use strict'
 const mongooose = require('mongoose');
 const Schema = mongooose.Schema;
 

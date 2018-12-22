@@ -1,3 +1,4 @@
+'use strict'
 const EMAIL_TEMPLATE = ( type, data ) => {
 
     //maybe type selectio later on basis of emails template.....

@@ -1,3 +1,4 @@
+'use strict'
 const SCHEMA_NAMES = {
 
     'userCollection': process.env.USER_COLLECTION,
