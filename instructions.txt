@@ -1,0 +1,29 @@
+#/index.js
+Main starter file.
+
+#/routes
+contains all routes informations
+#/routes/api/
+contains all routes on servers
+#/routes/config
+contains all routes all routes configurations
+
+#/public
+contains public files build(folder), images(uploaded)
+#/logs
+crash reposts and logs
+#/db
+contains all db things.
+#/db/models
+schema
+#/db/crudOperations
+crudOperations for all schema
+#/config
+contains both config and utilities
+exports lighter configurations.
+heavy things like utils and aws need to be imported exclusively.
+It is now Harwired so tough to change and no other structure was available.
+#/config/utils
+heavy functionality 
+#/config/aws
+heavy functionality

@@ -296,7 +296,7 @@ router.post('/register', (request, response)=>{
 //@description upload user profile pic
 //@access Public route
 router.post('/upload-pic',(request, response)=>{
-    logger.debug('routes/api/upload-pic upload user profile picture');
+    logger.debug('upload user profile picture');
 
     //inst aws and busboy
     const awsOperations = require('../../config/aws');
