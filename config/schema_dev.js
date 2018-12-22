@@ -2,8 +2,8 @@
 const SCHEMA_NAMES = {
 
     'userCollection': 'users',
-    'sessionCollection': 'session'
-
+    'sessionCollection': 'session',
+    'rolesCollection': 'roles'
 
 };
 module.exports = SCHEMA_NAMES;
