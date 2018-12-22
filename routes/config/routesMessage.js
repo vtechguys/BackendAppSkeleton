@@ -10,6 +10,8 @@ const LoginMsg = {
 
     successFullLoggedIn:'Successfully loggedIn.',
     userDoesNotExist: 'User doesnot exist.',
+    conflictAccountCredentials:'Conflict! Try logging using email.',
+
     errors: LoginErrors
 
 };

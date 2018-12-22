@@ -112,7 +112,6 @@ const UserSchema = new Schema({
 
 UserSchema.index({ userId: 1 });
 UserSchema.index({ userName: 1 });
-
 const User = mongoose.model( schemaNames.userCollection, UserSchema);
 
 module.exports = User;
