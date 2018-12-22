@@ -47,7 +47,7 @@ router.post('/login', (request, response)=>{
     if(body.loginId || body.loginId===""){
         isValidEmail = validate.email(body.loginId);
         isValidMobile = validate.mobile(body.loginId);
-        isValidUsername = validate.username(body.username);
+        isValidUsername = validate.username(body.loginId);
         //loginId is one of above then it true
         isValidLoginId = isValidEmail || isValidMobile || isValidUsername;
         if(!isValidLoginId){
@@ -59,6 +59,9 @@ router.post('/login', (request, response)=>{
     }
     if(body.password || body.password===""){
         isValidPassword = validate.password(body.password);
+        if(!isValidPassword){
+            errors["password"] = messages.login.errors.passwordInvalid;
+        }
     }
     else{
         errors["password"] = messages.login.errors.passwordRequired;
@@ -69,8 +72,8 @@ router.post('/login', (request, response)=>{
         utils.sendResponse(response, responseType.SUCCESS, messages.login.successFullLoggedIn);
     }
     else{
-        //errors["loginId"] = !isValidLoginId ? messages.login.errors.loginIdInvalid : undefined;
-        // errors["password"] = !isValidPassword ? messages.login.errors.passwordInvalid : undefined;
+        console.log("else ",errors,isValidLoginId,isValidPassword)
+        
         utils.sendResponse(response,responseType.BAD_REQUEST,messages.formInputErrors,null,errors);
     }
 
