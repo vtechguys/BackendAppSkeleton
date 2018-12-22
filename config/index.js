@@ -1,14 +1,5 @@
 'use strict'
 
-//access key id
-//AKIAJIFFTBBXNE2APV6Q
-
-//secret access key
-//IhzC8ZaknWDEmBsFpjcUa1joTZJ060KsPJSyruVk
-
-//user arn
-//arn:aws:iam::659261511556:user/vtechguys
-
 
 
 
@@ -39,29 +30,42 @@ const WELCOME_PAGE_PATH = process.env.WELCOME_PAGE_PATH || ( STATIC_FILES_SERVIN
 //logger to be used in routes/crudOperations
 const LOGGER = require('./logger');
 
-//utils to be used in routes/crudOperations
-const UTILS = require('./utils');
+
 
 //aws configs
-const awsConfig = require('./awsConfig');
-const aws = require('./aws');
+const AWS_CONFIG = require('./awsConfig');
+// const AWS = require('./aws');
+//Schema_Names
+const SCHEMA_NAMES = require('./schema');
+
+
+
+
+
+
+
+
 //Main export of file
 const indexConfig = {
     "responseTypes": RESPONSE_TYPES,
-    "utils": UTILS,
     "logger": LOGGER,
     "welcomePage": WELCOME_PAGE_PATH,
     "staticContentPath": STATIC_FILES_SERVING_PATH,
+
     //awsConfig
-    "AWS_USER_KEY": awsConfig.AWS_USER_KEY,
-    "AWS_USER_SECRET": awsConfig.AWS_USER_SECRET,
-    "AWS_REGION": awsConfig.AWS_REGION,
-    "AWS_BUCKET_URL": awsConfig.AWS_BUCKET_URL,
-    "AWS_CLOUDFRONT_URL": awsConfig.AWS_CLOUDFRONT_URL,
-    "AWS_BUCKET_Assets": awsConfig.AWS_BUCKET_Assets,
-    "AWS_BUCKET_Profile": awsConfig.AWS_BUCKET_Profile,
+    "AWS_USER_KEY": AWS_CONFIG.AWS_USER_KEY,
+    "AWS_USER_SECRET": AWS_CONFIG.AWS_USER_SECRET,
+    "AWS_REGION": AWS_CONFIG.AWS_REGION,
+    "AWS_BUCKET_URL": AWS_CONFIG.AWS_BUCKET_URL,
+    "AWS_CLOUDFRONT_URL": AWS_CONFIG.AWS_CLOUDFRONT_URL,
+    "AWS_BUCKET_Assets": AWS_CONFIG.AWS_BUCKET_Assets,
+    "AWS_BUCKET_Profile": AWS_CONFIG.AWS_BUCKET_Profile,
+    
     //awsOperations
-    "awsOperations":aws
+    // "awsOperations":AWS,
+
+    //schemaNames
+    "schemaNames": SCHEMA_NAMES
 
 };
 

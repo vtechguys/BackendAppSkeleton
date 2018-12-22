@@ -11,7 +11,7 @@ const config = require('../../config');
 //logger
 const logger = config.logger;
 //utils
-const utils = config.utils;
+const utils = require('../../config/utils');
 //responseTypes possible
 const responseType = config.responseTypes;
 
@@ -22,6 +22,8 @@ const _ = require('../../utils/loadash');
 //validation
 const validate = require('../../utils/validate');
 
+//Message as routes responses
+const messages = require('../config/routesMessage');
 
 
 
@@ -39,6 +41,9 @@ router.post('/login', (request, response)=>{
 
     let isValidLoginId = false;
     let isValidPassword = false;
+
+    let errors = {};
+
     if(body.loginId){
         isValidEmail = validate.email(body.loginId);
         isValidMobile = validate.mobile(body.loginId);
@@ -46,19 +51,24 @@ router.post('/login', (request, response)=>{
         //loginId is one of above then it true
         isValidLoginId = isValidEmail || isValidMobile || isValidUsername;
     }
+    else{
+        errors["loginId"] = messages.login.errors.loginIdRequired;
+    }
     if(body.password){
         isValidPassword = validate.password(body.password);
     }
-    
+    else{
+        errors["password"] = messages.login.errors.passwordRequired;
+    }
     if(isValidLoginId && isValidPassword){
         //DBCall
         console.log("DBCall");
+        utils.sendResponse(response, responseType.SUCCESS, messages.login.successFullLoggedIn);
     }
     else{
-        const errors = {};
-        errors["loginId"] = !isValidLoginId ? "Invalid LoginId" : undefined;
-        errors["password"] = !isValidPassword ? "Invalid Password" : undefined;
-        utils.sendResponse(response,responseType.BAD_REQUEST,'Invalid Inputs',null,errors);
+        errors["loginId"] = !isValidLoginId ? messages.login.errors.loginIdInvalid : undefined;
+        errors["password"] = !isValidPassword ? messages.login.errors.passwordInvalid : undefined;
+        utils.sendResponse(response,responseType.BAD_REQUEST,messages.formInputErrors,null,errors);
     }
 
 });
@@ -111,7 +121,7 @@ router.post('/register', (request, response)=>{
     //validations
 
     //errorsObj
-    const errors = {};
+    let errors = {};
     
     // console.log(body)
 
@@ -245,7 +255,7 @@ router.post('/register', (request, response)=>{
     if(!isValidCcode){
         errors["code"] = "Invalid Code";
     }
-    utils.sendResponse(response,responseType.SUCCESS,'register',{"data":"Data"},errors);
+    utils.sendResponse(response,responseType.SUCCESS,messages.register.successfullRegister,null,errors);
 });
 
 
@@ -270,7 +280,7 @@ router.post('/upload-pic',(request, response)=>{
             logger.debug('filedname:', fieldname.trim() + " filename:" + mimetype);
             if (fieldname.trim() != 'image' || !(mimetype.includes('image/'))) {
                 logger.debug('invalid mimetype');
-                return utils.sendResponse(response,responseType.BAD_REQUEST,'Invalid Image MIME type');
+                return utils.sendResponse(response,responseType.BAD_REQUEST,messages.imageUpload.invalidType);
             }
             console.log("bussboy okay")
             const config = require('../../config');
@@ -283,7 +293,7 @@ router.post('/upload-pic',(request, response)=>{
                 else{
                     logger.debug(result);
                     let URL_IMAGE = config.AWS_CLOUDFRONT_URL + '/profile/'+'profile-' + data.userId + '.jpeg';
-                    utils.sendResponse(response,responseType.SUCCESS,'Successfull upload');
+                    utils.sendResponse(response,responseType.SUCCESS,messages.imageUpload.successfullUpload);
                     // dbOperations.updateProperty(data.userId, 'profileImage', URL_IMAGE, (error1, result1)=>{
                     //     if(error1){
                     //         logger.error(error1);

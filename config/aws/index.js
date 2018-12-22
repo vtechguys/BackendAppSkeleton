@@ -1,10 +1,11 @@
+
 'use strict'
 
 const AWS = require('aws-sdk');
 const request = require('request');
 
-const config = require('./awsConfig');
-const logger = require('./logger');
+const config = require('../awsConfig');
+const logger = require('../logger');
 
 var s3 = new AWS.S3();
 
