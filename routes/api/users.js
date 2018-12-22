@@ -44,17 +44,20 @@ router.post('/login', (request, response)=>{
 
     let errors = {};
 
-    if(body.loginId){
+    if(body.loginId || body.loginId===""){
         isValidEmail = validate.email(body.loginId);
         isValidMobile = validate.mobile(body.loginId);
         isValidUsername = validate.username(body.username);
         //loginId is one of above then it true
         isValidLoginId = isValidEmail || isValidMobile || isValidUsername;
+        if(!isValidLoginId){
+            errors["loginId"] = messages.login.errors.loginIdInvalid;
+        }
     }
     else{
         errors["loginId"] = messages.login.errors.loginIdRequired;
     }
-    if(body.password){
+    if(body.password || body.password===""){
         isValidPassword = validate.password(body.password);
     }
     else{
@@ -66,8 +69,8 @@ router.post('/login', (request, response)=>{
         utils.sendResponse(response, responseType.SUCCESS, messages.login.successFullLoggedIn);
     }
     else{
-        errors["loginId"] = !isValidLoginId ? messages.login.errors.loginIdInvalid : undefined;
-        errors["password"] = !isValidPassword ? messages.login.errors.passwordInvalid : undefined;
+        //errors["loginId"] = !isValidLoginId ? messages.login.errors.loginIdInvalid : undefined;
+        // errors["password"] = !isValidPassword ? messages.login.errors.passwordInvalid : undefined;
         utils.sendResponse(response,responseType.BAD_REQUEST,messages.formInputErrors,null,errors);
     }
 
@@ -125,7 +128,7 @@ router.post('/register', (request, response)=>{
     
     // console.log(body)
 
-    if(body.userEmail){
+    if(body.userEmail || body.userEmail===""){
         body["email"] = body.userEmail.toLowerCase();
         isValidEmail = validate.email(body.userEmail);
         if(!isValidEmail){
@@ -137,7 +140,7 @@ router.post('/register', (request, response)=>{
     }
     
 
-    if(body.userName){
+    if(body.userName || body.userName===""){
         body["userName"] = body.userName.toLowerCase();
         isValidUsername = validate.username(body.userName);
         if(!isValidUsername){
@@ -150,7 +153,7 @@ router.post('/register', (request, response)=>{
 
     }
     
-    if(body.password){
+    if(body.password || body.password===""){
         isValidPassword = validate.password(body.password);
         if(!isValidPassword){
             errors["password"] = messages.register.errors.passwordInvalid;
@@ -233,7 +236,7 @@ router.post('/register', (request, response)=>{
         }
     }
     //general
-    if(body.firstName){
+    if(body.firstName || body.firstName===""){
         isValidFname = validate.name(body.firstName);
         if(!isValidFname){
             errors["firstName"] = messages.register.errors.firstNameInvalid;
@@ -244,7 +247,7 @@ router.post('/register', (request, response)=>{
     }
     
 
-    if(body.lastName){
+    if(body.lastName || body.lastName===""){
         isValidLname = validate.name(body.lastName);
         if(!isValidLname){
             errors["lastName"] = messages.register.errors.lastNameInvalid;
@@ -255,7 +258,7 @@ router.post('/register', (request, response)=>{
     }
     
 
-    if(body.gender){
+    if(body.gender || body.gender===""){
         isValidGender = validate.gender(body.gender);
         if(!isValidGender){
             errors["gender"] = messages.register.errors.genderInvalid;
@@ -266,7 +269,7 @@ router.post('/register', (request, response)=>{
     }
     
 
-    if(body.mobile){
+    if(body.mobile || body.mobile===""){
         isValidMobile = validate.mobile(body.mobile);
         if(!isValidMobile){
             errors["mobile"] = messages.register.errors.mobileInvalid;
@@ -277,7 +280,7 @@ router.post('/register', (request, response)=>{
     }
     
 
-    if(body.code){
+    if(body.code || body.code===""){
         isValidCcode = validate.code(body.code);
         if(!isValidCcode){
             errors["code"] = messages.register.errors.codeInvalid;
