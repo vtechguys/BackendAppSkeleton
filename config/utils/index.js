@@ -10,7 +10,7 @@ const config = require('../config');
 //Mailer-NodeMialer
 const nodeMailer = require('nodemailer');
 
-const email = require('./email');
+const email = require('./emailTemplates');
 
 //SendResponse Types possible
 const FAIL = "fail";

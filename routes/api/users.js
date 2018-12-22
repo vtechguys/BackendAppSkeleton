@@ -31,7 +31,7 @@ const messages = require('../config/routesMessage');
 //@description login a user using MailId,MobileNo,Username
 //@access Public route
 router.post('/login', (request, response)=>{
-    logger.debug('routes/api/users.js. POST /users/login.');
+    logger.debug('User loggingIn');
 
     const body = _.pick(request.body,["loginId","password"]);
 
@@ -125,29 +125,41 @@ router.post('/register', (request, response)=>{
     
     // console.log(body)
 
-    if(body.email){
-        body["email"] = body.email.toLowerCase();
-        isValidEmail = validate.email(body.email);
+    if(body.userEmail){
+        body["email"] = body.userEmail.toLowerCase();
+        isValidEmail = validate.email(body.userEmail);
+        if(!isValidEmail){
+            errors["email"] = messages.register.errors.emailInvalid;
+        }
+    }
+    else{
+        errors["email"] = messages.register.errors.emailRequired;
+    }
+    
+
+    if(body.userName){
+        body["userName"] = body.userName.toLowerCase();
+        isValidUsername = validate.username(body.userName);
+        if(!isValidUsername){
+            errors["userName"] = messages.register.errors.userNameInvalid;
+        }
+    
+    }
+    else{
+        errors["userName"] = messages.register.errors.userNameRequired
 
     }
-    if(!isValidEmail){
-        errors["email"] = "Invalid Email";
-    }
-
-    if(body.username){
-        body["username"] = body.username.toLowerCase();
-        isValidUsername = validate.username(body.username);
-    }
-    if(!isValidUsername){
-        errors["username"] = "Invalid UserName";
-    }
-
+    
     if(body.password){
         isValidPassword = validate.password(body.password);
+        if(!isValidPassword){
+            errors["password"] = messages.register.errors.passwordInvalid;
+        }
     }
-    if(!isValidPassword){
-        errors["password"] = "Invalid Password";
+    else{
+        errors["password"] = messages.register.errors.passwordRequired;
     }
+    
     //location
     if(!body.location || !body.location.latitude){
         isValidLat = true;
@@ -155,7 +167,7 @@ router.post('/register', (request, response)=>{
     else{
         isValidLat =( typeof(body.location.latitude) === "number"  && !isNaN(body.location.latitude) );
         if(!isValidLat){
-            errors["latitude"] = "Invalid latitude";
+            errors["latitude"] = messages.register.errors.latInvalid;
         }
     }
 
@@ -165,7 +177,7 @@ router.post('/register', (request, response)=>{
     else{
         isValidLng = ( typeof(body.location.longitude)==="number" && !isNaN(body.location.longitude) );
         if(!isValidLng){
-            errors["longitude"] = "Invalid longitude";
+            errors["longitude"] = messages.register.errors.lngInvalid;
         }
     }
 
@@ -177,7 +189,7 @@ router.post('/register', (request, response)=>{
     else{
         isValidArea = validate.string(body.address.area);
         if(!isValidArea){
-            errors["area"] = "Invalid Area";
+            errors["area"] = messages.register.errors.areaInvalid;
         }
     }
 
@@ -187,7 +199,7 @@ router.post('/register', (request, response)=>{
     else{
         isValidState = validate.string(body.address.state);
         if(!isValidState){
-            errors["state"] = "Invalid State";
+            errors["state"] = messages.register.errors.stateInvalid;
         }
     }
 
@@ -197,7 +209,7 @@ router.post('/register', (request, response)=>{
     else{
         isValidCity = validate.string(body.address.city);
         if(!isValidCity){
-            errors["city"] =  "Invalid City";
+            errors["city"] =  messages.register.errors.cityInvalid;
         }
     }
 
@@ -207,7 +219,7 @@ router.post('/register', (request, response)=>{
     else{
         isValidPincode = validate.number(body.address.pincode);
         if(!isValidPincode){
-            errors["pincode"] = "Invalid Pincode";
+            errors["pincode"] = messages.register.errors.pincodeInvalid;
         }
     }
 
@@ -217,44 +229,64 @@ router.post('/register', (request, response)=>{
     else{
         isValidCounrty = validate.string(body.address.country);
         if(!isValidCounrty){
-            errors["country"] = "Invalid Country";
+            errors["country"] = messages.register.errors.countryInvalid;
         }
     }
     //general
     if(body.firstName){
         isValidFname = validate.name(body.firstName);
+        if(!isValidFname){
+            errors["firstName"] = messages.register.errors.firstNameInvalid;
+        }
     }
-    if(!isValidFname){
-        errors["firstName"] = "Invalid FirstName";
+    else{
+        errors["firstName"] = messages.register.errors.firstNameRequired;
     }
+    
 
     if(body.lastName){
         isValidLname = validate.name(body.lastName);
+        if(!isValidLname){
+            errors["lastName"] = messages.register.errors.lastNameInvalid;
+        }
     }
-    if(!isValidLname){
-        errors["lastName"] = "Invalid LastName";
+    else{
+        errors["lastName"] = messages.register.errors.lastNameRequired;
     }
+    
 
     if(body.gender){
         isValidGender = validate.gender(body.gender);
+        if(!isValidGender){
+            errors["gender"] = messages.register.errors.genderInvalid;
+        }
     }
-    if(!isValidGender){
-        errors["gender"] = "Invalid Gender";
+    else{
+        errors["gender"] = messages.register.errors.genderRequired;
     }
+    
 
     if(body.mobile){
         isValidMobile = validate.mobile(body.mobile);
+        if(!isValidMobile){
+            errors["mobile"] = messages.register.errors.mobileInvalid;
+        }
     }
-    if(!isValidMobile){
-        errors["mobile"] = "Invalid Mobile No.";
+    else{
+        errors["mobile"] = messages.register.errors.mobileRequied;
     }
+    
 
     if(body.code){
         isValidCcode = validate.code(body.code);
+        if(!isValidCcode){
+            errors["code"] = messages.register.errors.codeInvalid;
+        }
     }
-    if(!isValidCcode){
-        errors["code"] = "Invalid Code";
+    else{
+        errors["code"] = messages.register.errors.codeRequired;
     }
+    
     utils.sendResponse(response,responseType.SUCCESS,messages.register.successfullRegister,null,errors);
 });
 
@@ -267,8 +299,7 @@ router.post('/upload-pic',(request, response)=>{
     logger.debug('routes/api/upload-pic upload user profile picture');
 
     //inst aws and busboy
-    const config = require('../../config');
-    const awsOperations = config.awsOperations;
+    const awsOperations = require('../../config/aws');
     const BusBoy = require('busboy');
 
     var data = {};
